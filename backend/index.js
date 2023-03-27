@@ -5,17 +5,28 @@ require('dotenv').config()
 const pinRoute = require('./routes/pins.js')
 const userRoute = require('./routes/users.js')
 const app = express()
+const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect(process.env.MONGO_URL).then(() => {
-    console.log('MongoDB is connected!');
-}).catch(e => console.log(e))
+const connectDB = async () => {
+    try {
+      const conn = await mongoose.connect(process.env.MONGO_URL);
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+}
+
 
 app.use('/api/pins', pinRoute);
 app.use('/api/users', userRoute);
 
-app.listen(8800, () => {
-    console.log('Backend server is running!');
+//Connect to the database before listening
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("listening for requests");
+    })
 })
