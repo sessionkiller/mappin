@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 3000
 app.use(express.json())
 app.use(cors())
 
+app.use(express.static('public'))
+
 const connectDB = async () => {
     try {
       const conn = await mongoose.connect(process.env.MONGO_URL);
